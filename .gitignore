@@ -1,0 +1,8 @@
+terraform.tfvars
+config.yml
+config.txt
+/vendor/bundle
+.idea/
+coverage/
+rspec.xml
+.ruby-gemset

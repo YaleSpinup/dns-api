@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "macpool": {
+      "type": "integer"
+    },
+    "properties": {
+      "type": "string",
+      "description": "Pipe-separated key=value list of properties"
+    }
+  }
+}

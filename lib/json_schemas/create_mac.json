@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "required": ["mac"],
+  "properties": {
+    "mac": {
+      "type": "string",
+      "description": "MAC address in the format 00-00-00-00-00-00"
+    },
+    "macpool": {
+      "type": "integer",
+      "description": "MACPool id number"
+    },
+    "properties": {
+      "type": "string",
+      "description": "Pipe-separated key=value list of properties"
+    }
+  }
+}

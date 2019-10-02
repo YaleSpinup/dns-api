@@ -1,0 +1,18 @@
+dns:
+  log_level: info
+  accounts:
+    bam-dev:
+      provider: proteus
+      cidr_file: config/cidr_test.json
+      config:
+        url: <%= ENV['PROTEUS_URL'] %>
+        username: <%= ENV['PROTEUS_USER'] %>
+        password: <%= ENV['PROTEUS_PASS'] %>
+        viewid: <%= ENV['PROTEUS_VIEWID'] %>
+auth:
+  token512:
+    <%= ENV['PROTEUS_API_AUTH_TOKEN_512'] %>:
+      - POST
+      - PUT
+      - GET
+      - DELETE

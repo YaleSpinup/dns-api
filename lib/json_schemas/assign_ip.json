@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": ["hostname"],
+  "properties": {
+    "hostname": {
+      "type": "string"
+    },
+    "mac": {
+      "type": "string",
+      "default": ""
+    },
+    "cidr": {
+      "type": "string"
+    },
+    "network_id": {
+      "type": "string"
+    },
+    "reverse": {
+      "type": "boolean",
+      "default": true
+    },
+    "properties": {
+      "type": "string"
+    }
+  }
+}

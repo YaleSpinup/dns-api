@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": ["type", "record"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "pattern": "(AliasRecord|ExternalHostRecord|HostRecord)$"
+    },
+    "record": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string"
+    },
+    "ttl": {
+      "type": "integer"
+    },
+    "create_linked": {
+      "type": "boolean",
+      "default": false
+    },
+    "properties": {
+      "type": "string"
+    }
+  }
+}

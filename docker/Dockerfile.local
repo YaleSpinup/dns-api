@@ -1,0 +1,32 @@
+FROM ruby:2.6.3-slim
+EXPOSE 8080
+
+# throw errors if Gemfile has been modified since Gemfile.lock
+RUN bundle config --global frozen 1
+
+ENV APP_ENV development
+ENV BUILD_DEPS "make gcc git"
+ENV APPDIR /opt/api
+RUN mkdir -p $APPDIR
+
+WORKDIR $APPDIR
+
+# Copy the Gemfile and Gemfile.lock first so bundle install can be cached
+COPY Gemfile $APPDIR/
+COPY Gemfile.lock $APPDIR/
+
+# Install dependencies and run bundler
+RUN apt-get update -y && \
+    apt-get install -y $BUILD_DEPS --no-install-recommends && \
+    bundle install --without development test && \
+    apt-get remove --purge -y $BUILD_DEPS && \
+    rm -rf /var/lib/apt /var/lib/dpkg /var/lib/cache /var/lib/log /var/lib/apt/lists/*
+
+COPY . $APPDIR
+
+RUN chown -R nobody:nogroup $APPDIR
+USER nobody
+
+# Start server
+CMD bundle exec puma -C config/puma.rb -p 8080
+

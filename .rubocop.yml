@@ -1,0 +1,23 @@
+LineLength:
+  Max: 130
+  Enabled: true
+MethodLength:
+  Max: 30
+BlockLength:
+  Enabled: false
+ClassLength:
+  Enabled: false
+ClassVars:
+  Enabled: false
+EmptyLinesAroundClassBody:
+  Enabled: false
+EmptyLinesAroundBlockBody:
+  Enabled: false
+EmptyLinesAroundModuleBody:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 23
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/NumericLiterals:
+  Enabled: false
