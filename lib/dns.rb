@@ -119,6 +119,7 @@ module DnsApi
     def entity(id, types = DEFAULT_TYPES)
       object = @client.get_entity_by_id(id)
       raise DnsApi::ErrorHandling::NotFound if object.nil? || (!types.nil? && !types.include?(object.type))
+
       object
     rescue ::Proteus::ApiEntityError::EntityNotFound
       raise DnsApi::ErrorHandling::NotFound
@@ -153,6 +154,7 @@ module DnsApi
       config_id = @client.get_entities.first.id
       ipv4 = @client.get_ip4_address(config_id, ip_addr)
       raise DnsApi::ErrorHandling::NotFound if ipv4.type.nil?
+
       ipv4
     rescue ::Proteus::ApiEntityError::EntityNotFound
       raise DnsApi::ErrorHandling::NotFound
@@ -171,15 +173,14 @@ module DnsApi
 
     def network_from_cidr(cidr)
       raise ::DnsApi::ErrorHandling::ApiError unless cidr
+
       NetAddr::CIDR.create(cidr).enumerate.first(10).each do |ip|
-        begin
-          DnsApi::Log.info "Trying to use IP address #{ip} as canary"
-          parent = parent_id(ipv4_address(ip).id)
-          return parent
-        rescue DnsApi::ErrorHandling::NotFound => e
-          DnsApi::Log.info "Rescuing assign IP from payload #{e.inspect}"
-          next
-        end
+        DnsApi::Log.info "Trying to use IP address #{ip} as canary"
+        parent = parent_id(ipv4_address(ip).id)
+        return parent
+      rescue DnsApi::ErrorHandling::NotFound => e
+        DnsApi::Log.info "Rescuing assign IP from payload #{e.inspect}"
+        next
       end
     end
 
@@ -224,6 +225,7 @@ module DnsApi
       DnsApi::Log.info "Getting MAC address object from Proteus for #{mac}"
       mac = @client.get_mac_address(mac)
       raise DnsApi::ErrorHandling::NotFound if mac.type.nil?
+
       mac
     rescue ::Proteus::ApiEntityError::EntityNotFound
       raise DnsApi::ErrorHandling::NotFound
@@ -234,5 +236,7 @@ module DnsApi
       @client.associate_mac_address_with_pool(mac, body['macpool']) unless body['macpool'].nil?
       @client.update_properties(mac_address(mac).id, body['properties']) unless body['properties'].nil?
     end
+
   end
+
 end

@@ -18,8 +18,8 @@ dns:
         password: ${prod_secret}
         viewid: ${prod_view}
 auth:
-  token512:
-    ${auth_token512}:
+  token:
+    ${auth_token}:
       - POST
       - PUT
       - GET

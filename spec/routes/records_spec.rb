@@ -7,12 +7,13 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
   describe 'v1 API' do
     prefix = '/v1/dns'
+    valid_token = '$2a$10$mLHLxLBpK0Ile.nNvilpu.nkHyZPL0NDtdbDbTH/QEP7yypEvlfCK'
 
     describe "when GET #{prefix}/:account/records" do
       let(:route) { "#{prefix}/bam-test/records" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/records"
         end
 
@@ -30,7 +31,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           get route
         end
 
@@ -41,7 +42,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with unset record type' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route
         end
 
@@ -55,7 +56,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with HostRecord type' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'type' => 'HostRecord', 'hint' => 'some.example.com'
         end
 
@@ -72,7 +73,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with AliasRecord type' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'type' => 'AliasRecord', 'hint' => 'some.example.com'
         end
 
@@ -89,7 +90,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with ExternalHostRecord type and name parameter' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'type' => 'ExternalHostRecord', 'name' => 'some.example.com'
         end
 
@@ -108,7 +109,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with ExternalHostRecord type and keyword parameters' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'type' => 'ExternalHostRecord', 'keyword' => 'foobar'
         end
 
@@ -125,7 +126,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with ExternalHostRecord type and no parameters' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'type' => 'ExternalHostRecord'
         end
 
@@ -145,7 +146,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
       let(:route) { "#{prefix}/bam-test/records/12345" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/records/12345"
         end
 
@@ -163,7 +164,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           get route
         end
 
@@ -174,7 +175,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route
         end
 
@@ -200,7 +201,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/records"
         end
 
@@ -218,7 +219,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           get route
         end
 
@@ -229,7 +230,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'AliasRecord with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           post route, aliasparams.to_json
         end
 
@@ -244,7 +245,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'ExternalHostRecord with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           post route, externalparams.to_json
         end
 
@@ -259,7 +260,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'HostRecord with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           post route, hostparams.to_json
         end
 
@@ -274,7 +275,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with empty body' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           post route
         end
         it 'status code 400' do
@@ -284,7 +285,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with bad json params' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           post route, badtype.to_json
         end
         it 'status code 422' do
@@ -297,7 +298,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
       let(:route) { "#{prefix}/bam-test/records/12345" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           delete "#{prefix}/bork/records/12345"
         end
 
@@ -315,7 +316,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           delete route
         end
 
@@ -326,7 +327,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           delete route
         end
 

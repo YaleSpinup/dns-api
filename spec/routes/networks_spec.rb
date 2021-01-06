@@ -7,12 +7,13 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
   describe 'v1 API' do
     prefix = '/v1/dns'
+    valid_token = '$2a$10$mLHLxLBpK0Ile.nNvilpu.nkHyZPL0NDtdbDbTH/QEP7yypEvlfCK'
 
     describe "when GET #{prefix}/:account/networks" do
       let(:route) { "#{prefix}/bam-test/networks" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/networks"
         end
 
@@ -30,7 +31,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           get route
         end
 
@@ -41,7 +42,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route, 'hint' => '192.168'
         end
 

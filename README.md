@@ -47,13 +47,17 @@ PUT     '/:account/macs'
 
 ## Authentication
 
-The API uses the "Auth-Token" HTTP header to authenticate all requests (GET, POST, DELETE) using a simple token. You'll
-need to submit a valid token in this header with each request (see Examples below).  To generate a token for use by the
-API, you can use `uuidgen`, then get a SHA512 digest and store that in the config.yml file, e.g.:
+The API uses the "X-Auth-Token" HTTP header to authenticate all requests (GET, POST, DELETE) using a simple token.
+ The client submits a valid bcrypted token in the header with each request (see Examples below).
+To generate a token for use by the API, you can use `uuidgen`, store that in the config.yml file, and bcrypt it 
+for use by the client, e.g.
+```
+Run uuidgen, record that value in keepass and update the auth_token password parameter in jenkins.  Use toker to bcrypt hash the uuid for use in the client's header.
 
-```shell
-export PROTEUS_API_AUTH_TOKEN=$(uuidgen)
-export AUTH_TOKEN_512=$(ruby -e "require 'digest';puts(Digest::SHA512.hexdigest(\"${PROTEUS_API_AUTH_TOKEN}\"))")
+UUID=$(uuidgen)
+echo "UUID: ${UUID}"
+HASH=$(./toker hash "${UUID}")
+echo "HASH: ${HASH}"
 ```
 
 ## Local Development
@@ -77,12 +81,11 @@ Setup:
 while IFS= read -r result; do unset ${result%%=*}; done < <(env | grep PROTEUS_)
 
 # Create configuration file from erb template
-export PROTEUS_API_AUTH_TOKEN=$(uuidgen)
-export PROTEUS_API_AUTH_TOKEN_512=$(ruby -e "require 'digest';puts(Digest::SHA512.hexdigest(\"${PROTEUS_API_AUTH_TOKEN}\"))")
+export PROTEUS_API_X_AUTH_TOKEN=$(uuidgen)
 
 echo "For testing copy and execute the following in a separate shell:"
-echo "export PROTEUS_API_AUTH_TOKEN=${PROTEUS_API_AUTH_TOKEN}"
-echo "Supply the following Auth-Token value in the http header: ${PROTEUS_API_AUTH_TOKEN}"
+echo "export CLIENT_BCRYPT_X_AUTH_TOKEN=$(toker hash ${PROTEUS_API_X_AUTH_TOKEN})"
+echo "Supply the following X-Auth-Token value in the http header: ${CLIENT_BCRYPT_X_AUTH_TOKEN}"
 
 export PROTEUS_URL=<replace_with_bluecat_management url>
 export PROTEUS_USER=<replace_with_bluecat_api_username>
@@ -103,8 +106,8 @@ The app will run and be ready to receive requests at `localhost:9393`. Modificat
 To begin testing, launch a separate shell session.
 
 ```shell
-# Paste the export command echoed during setup of the application development environment
-#   export PROTEUS_API_AUTH_TOKEN=${PROTEUS_API_AUTH_TOKEN}
+# use the bcrypted hash of the UUID created earlier
+# export CLIENT_BCRYPT_X_AUTH_TOKEN=$(toker hash ${PROTEUS_API_X_AUTH_TOKEN})"
 
 # verify unprotected routes
 curl http://localhost:9393/v1/dns/ping
@@ -115,7 +118,7 @@ curl http://localhost:9393/v1/dns/version
 # verify authorization
 curl http://localhost:9393/
 # You should get "Invalid token".
-curl -H "Auth-Token:${PROTEUS_API_AUTH_TOKEN}" http://localhost:9393/
+curl -H "X-Auth-Token:${CLIENT_BCRYPT_X_AUTH_TOKEN}" http://localhost:9393/
 # You should get "Requested resource not found!"
 ```
 No errors logged by the api running in developement shell session logstream in `stdout`.
@@ -138,8 +141,7 @@ You can use `Dockerfile.local` to run the app locally in a container:
 ```shell
 # Setup environment as before
 while IFS= read -r result; do unset ${result%%=*}; done < <(env | grep PROTEUS_)
-export PROTEUS_API_AUTH_TOKEN=$(uuidgen)
-export PROTEUS_API_AUTH_TOKEN_512=$(ruby -e "require 'digest';puts(Digest::SHA512.hexdigest(\"${PROTEUS_API_AUTH_TOKEN}\"))")
+export PROTEUS_API_X_AUTH_TOKEN=$(uuidgen)
 export PROTEUS_URL=<replace_with_bluecat_management url>
 export PROTEUS_USER=<replace_with_bluecat_api_username>
 export PROTEUS_PASS=<replace_with_bluecat_api_username_password>
@@ -148,7 +150,7 @@ export PROTEUS_VIEWID=<replace_with_bluecat_api_username_viewid_from_portal>
 docker build -f docker/Dockerfile.local . -t "localhost/dns-api"
 
 # Pass these values into running container environment
-docker run -e PROTEUS_API_AUTH_TOKEN_512=${PROTEUS_API_AUTH_TOKEN_512} \
+docker run -e PROTEUS_API_X_AUTH_TOKEN=${PROTEUS_API_X_AUTH_TOKEN} \
            -e PROTEUS_URL=${PROTEUS_URL} \
            -e PROTEUS_USER=${PROTEUS_USER} \
            -e PROTEUS_PASS=${PROTEUS_PASS} \
@@ -171,7 +173,7 @@ curl http://localhost:8080/v1/dns/version
 # verify authorization
 curl http://localhost:8080/
 # You should get "Invalid token".
-curl -H "Auth-Token:${PROTEUS_API_AUTH_TOKEN}" http://localhost:8080/
+curl -H "X-Auth-Token:${CLIENT_BCRYPT_X_AUTH_TOKEN}" http://localhost:8080/
 # You should get "Requested resource not found!"
 
 # Stopping the docker container
@@ -201,7 +203,7 @@ read -r -d '' PROTEUS_HOST_PAYLOAD <<-EOF
 EOF
 export PROTEUS_HOST_PAYLOAD
 
-curl -H "Auth-Token: ${PROTEUS_API_AUTH_TOKEN}" \
+curl -H "X-Auth-Token: ${CLIENT_BCRYPT_X_AUTH_TOKEN}" \
      -H "Content-Type: application/json" \
      -X 'POST' \
      -d "${PROTEUS_HOST_PAYLOAD}" \
@@ -230,7 +232,7 @@ read -r -d '' PROTEUS_MAC_PAYLOAD <<-EOF
 EOF
 export PROTEUS_MAC_PAYLOAD
 
-curl -H "Auth-Token: ${PROTEUS_API_AUTH_TOKEN}" \
+curl -H "X-Auth-Token: ${CLIENT_BCRYPT_X_AUTH_TOKEN}" \
      -H "Content-Type: application/json" \
      -X 'POST' \
      -d "${PROTEUS_MAC_PAYLOAD}" \
@@ -243,6 +245,7 @@ curl -H "Auth-Token: ${PROTEUS_API_AUTH_TOKEN}" \
  - Tenyo Grozev (tenyo.grozev@yale.edu)
  - Jose Andrade (jose.andrade@yale.edu)
  - Vincent Balbarin (vincent.balbarin@yale.edu)
+ - Darryl Wisneski (darryl.wisneski@yale.edu)
 
  ## License
 

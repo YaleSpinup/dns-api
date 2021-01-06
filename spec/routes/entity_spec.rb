@@ -7,12 +7,13 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
   describe 'v1 API' do
     prefix = '/v1/dns'
+    valid_token = '$2a$10$mLHLxLBpK0Ile.nNvilpu.nkHyZPL0NDtdbDbTH/QEP7yypEvlfCK'
 
     describe "when GET #{prefix}/:account/id/:id" do
       let(:route) { "#{prefix}/bam-test/id/12345" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/id/12345"
         end
 
@@ -30,7 +31,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           get route
         end
 
@@ -41,7 +42,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route
         end
 
@@ -62,7 +63,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
       let(:route) { "#{prefix}/bam-test/id/12345" }
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           delete "#{prefix}/bork/id/12345"
         end
 
@@ -80,7 +81,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with invalid token' do
         subject do
-          header 'Auth-Token', 'bork'
+          header 'X-Auth-Token', 'bork'
           delete route
         end
 
@@ -91,7 +92,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'with valid token' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           delete route
         end
 

@@ -5,7 +5,7 @@ EXPOSE 8080
 RUN bundle config --global frozen 1
 
 ENV APP_ENV development
-ENV BUILD_DEPS "make gcc git"
+ENV BUILD_DEPS "make gcc g++ git"
 ENV APPDIR /opt/api
 RUN mkdir -p $APPDIR
 

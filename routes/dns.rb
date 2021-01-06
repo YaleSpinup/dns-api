@@ -25,10 +25,10 @@ module DnsApi
         content_type :json
         path_info = request.env['PATH_INFO']
         method = request.env['REQUEST_METHOD']
-        token = request.env['HTTP_AUTH_TOKEN']
+        htoken = request.env['HTTP_X_AUTH_TOKEN']
         DnsApi::Log.debug("Processing request: #{method} #{path_info}")
         unless %w[/v1/dns/ping /v1/dns/version].include? path_info
-          halt 401, 'Invalid token'.to_json unless valid_token?(token, method)
+          halt 401, 'Invalid token'.to_json unless valid_token?(htoken)
         end
         response.headers['Access-Control-Allow-Origin'] = '*'
       end
@@ -41,7 +41,7 @@ module DnsApi
       namespace '/v1/dns' do
         options '*' do
           response.headers['Allow'] = 'GET, POST, PUT, OPTIONS'
-          response.headers['Access-Control-Allow-Headers'] = 'Auth-Token, Content-Type, Accept'
+          response.headers['Access-Control-Allow-Headers'] = 'X-Auth-Token, Content-Type, Accept'
           response.headers['Access-Control-Allow-Origin'] = '*'
           200
         end
@@ -197,6 +197,7 @@ module DnsApi
           begin
             rec = DnsApi::Proteus.new(App.dns['accounts'][params[:account]]['config']).records(params)
             raise DnsApi::ErrorHandling::NotFound if rec.nil? || rec == []
+
             rec.collect(&:to_h).to_json
           rescue DnsApi::ErrorHandling::NotFound
             [].to_json
