@@ -13,7 +13,7 @@ module DnsApi
     def self.method_missing(method_sym, *args, &block)
       if LEVELS.include?(method_sym.to_s)
         if @logger.nil?
-          @logger = Logger.new(STDOUT)
+          @logger = Logger.new($stdout)
           @logger.level = Object.const_get("Logger::#{@@log_level}")
           @logger.datetime_format = '%Y-%m-%d %H:%M:%S '
         end

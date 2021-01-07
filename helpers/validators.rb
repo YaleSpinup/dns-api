@@ -30,14 +30,14 @@ module DnsApi
       # Raises an exception when validation fails
       def schema_validate(schema, data)
         schema_file = "lib/json_schemas/#{schema}.json"
-        DnsApi::Log.info 'Validating input against schema: ' + schema_file
+        DnsApi::Log.info "Validating input against schema: #{schema_file}"
         JSON::Validator.validate!(schema_file, data)
-        DnsApi::Log.debug 'Schema is valid, returning data: ' + data.inspect
+        DnsApi::Log.debug "Schema is valid, returning data: #{data.inspect}"
         data
       rescue JSON::Schema::ValidationError => e
-        raise DnsApi::ErrorHandling::SchemaValidationError, 'JSON schema validation failed! ' + e.message
+        raise DnsApi::ErrorHandling::SchemaValidationError, "JSON schema validation failed! #{e.message}"
       rescue Errno::ENOENT => e
-        raise DnsApi::ErrorHandling::ApiError, 'JSON schema file not found! ' + e.message
+        raise DnsApi::ErrorHandling::ApiError, "JSON schema file not found! + #{e.message}"
       end
     end
   end

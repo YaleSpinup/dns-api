@@ -1,0 +1,26 @@
+dns:
+  log_level: {{ .log_level }}
+  accounts:
+    ipnode-test:
+      provider: proteus
+      cidr_file: config/cidr_test.json
+      config:
+        url: {{ .nonprod_url }}
+        username: {{ .nonprod_user }}
+        password: {{ .nonprod_secret }}
+        viewid: {{ .nonprod_view }}
+    ipnode-prod:
+      provider: proteus
+      cidr_file: config/cidr_prod.json
+      config:
+        url: {{ .prod_url }}
+        username: {{ .prod_user }}
+        password: {{ .prod_secret }}
+        viewid: {{ .prod_view }}
+auth:
+  token:
+    {{ .auth_token }}:
+      - POST
+      - PUT
+      - GET
+      - DELETE

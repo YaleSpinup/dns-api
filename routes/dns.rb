@@ -27,9 +27,7 @@ module DnsApi
         method = request.env['REQUEST_METHOD']
         htoken = request.env['HTTP_X_AUTH_TOKEN']
         DnsApi::Log.debug("Processing request: #{method} #{path_info}")
-        unless %w[/v1/dns/ping /v1/dns/version].include? path_info
-          halt 401, 'Invalid token'.to_json unless valid_token?(htoken)
-        end
+        halt 401, 'Invalid token'.to_json unless (%w[/v1/dns/ping /v1/dns/version].include? path_info) || valid_token?(htoken)
         response.headers['Access-Control-Allow-Origin'] = '*'
       end
 
