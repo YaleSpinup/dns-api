@@ -62,6 +62,8 @@ echo "HASH: ${HASH}"
 
 ## Local Development
 
+Warning - 20210113: wasabi gem has a bug in parsing XML/SOAP since 3.6.0.  We are holding back wasabi gem to 3.5.0 which still works:  https://github.com/savonrb/wasabi/issues/99
+
 Requirements:
 
  - `rbenv`
