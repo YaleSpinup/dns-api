@@ -36,10 +36,3 @@ USER nobody
 
 # Start Puma
 CMD bundle exec puma -C config/puma.rb -p 8080
-
-
-
-
-
-
-
