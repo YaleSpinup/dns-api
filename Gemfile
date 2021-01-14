@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'bcrypt'
 gem 'json'
 gem 'json-schema'
 gem 'logger'

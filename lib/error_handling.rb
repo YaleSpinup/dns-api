@@ -2,7 +2,9 @@ module DnsApi
   # Error handling
   module ErrorHandling
     class ApiError < StandardError; end
+
     class NotFound < ApiError; end
+
     class SchemaValidationError < ApiError; end
 
     # catch any exceptions from the app and return proper HTTP response

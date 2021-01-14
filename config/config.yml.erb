@@ -10,8 +10,8 @@ dns:
         password: <%= ENV['PROTEUS_PASS'] %>
         viewid: <%= ENV['PROTEUS_VIEWID'] %>
 auth:
-  token512:
-    <%= ENV['PROTEUS_API_AUTH_TOKEN_512'] %>:
+  token:
+    <%= ENV['PROTEUS_API_X_AUTH_TOKEN'] %>:
       - POST
       - PUT
       - GET

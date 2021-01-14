@@ -7,6 +7,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
   describe 'v1 API' do
     prefix = '/v1/dns'
+    valid_token = '$2a$10$mLHLxLBpK0Ile.nNvilpu.nkHyZPL0NDtdbDbTH/QEP7yypEvlfCK'
 
     describe "when GET #{prefix}/ping" do
       subject { get "#{prefix}/ping" }
@@ -34,7 +35,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
     describe "when GET #{prefix}" do
       subject do
-        header 'Auth-Token', 'test'
+        header 'X-Auth-Token', valid_token
         get prefix
       end
       it 'status code 200 and includes test account' do
@@ -48,7 +49,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'non-existent account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get "#{prefix}/bork/id/12345"
         end
         it 'status code 404' do
@@ -58,7 +59,7 @@ RSpec.describe 'DnsApi::Routes::DNS' do
 
       context 'valid account' do
         subject do
-          header 'Auth-Token', 'test'
+          header 'X-Auth-Token', valid_token
           get route
         end
         it 'returns supported resources' do
