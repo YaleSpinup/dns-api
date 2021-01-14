@@ -2,27 +2,20 @@ module DnsApi
   module Helpers
     # various validation methods
     module Validators
-      ##
-      # returns true if the X-Auth-Token HTTP HEADER encrypted token is valid
-      def valid_token?(htoken = nil)
-        if htoken.nil?
-          DnsApi::Log.error 'Validation failed: No token found in X-Auth-Token header! '
-          halt 401, 'Token is required'.to_json
+      # returns true if the given encrypted token is valid for the given request action (GET, POST, etc)
+      def valid_token?(htoken = nil, action = nil)
+        return false if htoken.nil?
+
+        token = BCrypt::Password.new(htoken)
+        App.auth['token'].each_key do |t|
+          return App.auth['token'][t].include?(action) if token == t
         end
 
-        # get the key name itself for the config AUTH UUID
-        xtoken = ''
-        config_token = App.auth['token']
-        config_token.is_a?(Hash) && config_token.any? { |key, _| xtoken = key }
-
-        # compare the encrypted header token, it must derive from config token
-        return true if BCrypt::Password.new(htoken) == xtoken
-
-        DnsApi::Log.error 'Token validation failed: Invalid token! '
-        halt 401, 'Invalid token'.to_json
+        DnsApi::Log.warn('Unable to authenticate request: invalid token')
+        false
       rescue BCrypt::Errors::InvalidHash
-        DnsApi::Log.error 'Unable to authenticate request: token not a valid hash '
-        halt 401, 'Token not a valid hash'.to_json
+        DnsApi::Log.warn('Unable to authenticate request: token not a valid hash')
+        false
       end
 
       ##
